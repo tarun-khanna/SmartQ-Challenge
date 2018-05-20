@@ -1,7 +1,6 @@
 app.factory("apiFactory", function($q, $http) {
   return {
     getData: function() {
-      console.log("Factory method");
       const deferredObject = $q.defer();
       $http.get("https://thesmartq.firebaseio.com/menu.json").then(
         data => {

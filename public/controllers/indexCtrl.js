@@ -1,21 +1,31 @@
-app.controller("indexCtrl", function($scope, apiFactory) {
+app.controller("indexCtrl", function($scope, apiFactory, $document, $filter) {
   $scope.cart = [];
   let menuRes = apiFactory.getData();
   menuRes.then(
     data => {
-      console.log(data);
-
       $scope.menu = data;
     },
     err => {
       console.log(err);
     }
   );
+  let date = new Date();
+  $scope.currTime = $filter("date")(new Date(), "HH:mm");
+
+  $scope.categoryClicked = function(category) {
+    let allListTabs = document.getElementsByClassName("list-group-item");
+    for (let i = 0; i < allListTabs.length; ++i) {
+      allListTabs[i].classList.remove("active");
+    }
+    let ele =
+      category == "all"
+        ? document.getElementById("allTab")
+        : document.getElementsByClassName(category)[0];
+    ele.classList.add("active");
+  };
   $scope.addItemToCart = function(item) {
-    console.log("item clicked=", item);
     let i = $scope.cart.indexOf(item);
     if (i == -1) {
-      console.log("Item is not in cart");
       item["quantity"] = 1;
       $scope.cart.push(item);
     } else {
@@ -23,7 +33,6 @@ app.controller("indexCtrl", function($scope, apiFactory) {
     }
   };
   $scope.removeItemFromCart = function(item) {
-    console.log("item clicked=", item);
     let i = $scope.cart.indexOf(item);
     if (i != -1) {
       if ($scope.cart[i]["quantity"] == 1) {
@@ -43,5 +52,8 @@ app.controller("indexCtrl", function($scope, apiFactory) {
       totalPrice += item.price * item.quantity;
     });
     return totalPrice;
+  };
+  $scope.emptyCart = function() {
+    $scope.cart.length = 0;
   };
 });
